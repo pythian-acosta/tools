@@ -73,7 +73,7 @@ function clearOutputs() {
 }
 
 function copyToClipboard(elementId, button) {
-  const text = document.getElementById(elementId).textContent.replace(/\n/g, '').replace(/\s+/g, '');
+  const text = document.getElementById(elementId).textContent;
   navigator.clipboard.writeText(text).then(() => {
     flashButtonColor(button, 'green');
   }).catch(() => {
