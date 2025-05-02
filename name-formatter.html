@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Name Formatter</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 150px; }
+    .output { margin-top: 20px; }
+    .output div { margin-bottom: 10px; }
+    .copy-btn {
+      margin-left: 10px;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Name Formatter</h1>
+  <textarea id="inputNames" placeholder="Enter names, one per line..."></textarea>
+  <div id="error" class="error"></div>
+
+  <div class="output">
+    <div>
+      <strong>Output 1 (space-separated):</strong><br>
+      <span id="output1"></span>
+      <button class="copy-btn" onclick="copyToClipboard('output1', this)">Copy</button>
+    </div>
+    <div>
+      <strong>Output 2 (pipe-separated):</strong><br>
+      <span id="output2"></span>
+      <button class="copy-btn" onclick="copyToClipboard('output2', this)">Copy</button>
+    </div>
+    <div>
+      <strong>Output 3 (--tag name=):</strong><br>
+      <span id="output3"></span>
+      <button class="copy-btn" onclick="copyToClipboard('output3', this)">Copy</button>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('inputNames');
+    const errorDiv = document.getElementById('error');
+
+    input.addEventListener('input', () => {
+      const rawLines = input.value.trim().split(/\n+/);
+      const names = rawLines.filter(name => name.trim() !== '');
+      const invalidNames = names.filter(name => name.includes(' '));
+
+      if (invalidNames.length > 0) {
+        errorDiv.textContent = 'Error: Names cannot contain spaces. Invalid name(s): ' + invalidNames.join(', ');
+        clearOutputs();
+        return;
+      } else {
+        errorDiv.textContent = '';
+      }
+
+      document.getElementById('output1').textContent = names.join(' ');
+      document.getElementById('output2').textContent = names.join('|');
+      document.getElementById('output3').textContent = names.map(name => `--tag name=${name}`).join(' ');
+    });
+
+    function clearOutputs() {
+      document.getElementById('output1').textContent = '';
+      document.getElementById('output2').textContent = '';
+      document.getElementById('output3').textContent = '';
+    }
+
+    function copyToClipboard(elementId, button) {
+      const text = document.getElementById(elementId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        flashButtonColor(button, 'green');
+      }).catch(() => {
+        flashButtonColor(button, 'red');
+      });
+    }
+
+    function flashButtonColor(button, color) {
+      const originalColor = button.style.backgroundColor;
+      button.style.backgroundColor = color;
+      setTimeout(() => {
+        button.style.backgroundColor = originalColor || '#007bff';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
+
