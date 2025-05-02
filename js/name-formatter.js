@@ -7,12 +7,12 @@ const enableSuffix = document.getElementById('enableSuffix');
 const errorDiv = document.getElementById('error');
 
 window.addEventListener('DOMContentLoaded', () => {
-  input.value = localStorage.getItem('inputNames') || '';
-  prefixInput.value = localStorage.getItem('prefix') || '';
-  suffixInput.value = localStorage.getItem('suffix') || '';
-  enablePrefix.checked = localStorage.getItem('enablePrefix') !== 'false';
-  enableSuffix.checked = localStorage.getItem('enableSuffix') !== 'false';
-  document.getElementById('customCommand').value = localStorage.getItem('customCommand') || '';
+  input.value = localStorage.getItem('pythian_acosta_name-formatter_inputNames') || '';
+  prefixInput.value = localStorage.getItem('pythian_acosta_name-formatter_prefix') || '';
+  suffixInput.value = localStorage.getItem('pythian_acosta_name-formatter_suffix') || '';
+  enablePrefix.checked = localStorage.getItem('pythian_acosta_name-formatter_enablePrefix') !== 'false';
+  enableSuffix.checked = localStorage.getItem('pythian_acosta_name-formatter_enableSuffix') !== 'false';
+  document.getElementById('customCommand').value = localStorage.getItem('pythian_acosta_name-formatter_customCommand') || '';
   updateOutputs();
 });
 
@@ -25,12 +25,12 @@ document.getElementById('customCommand').addEventListener('input', updateOutputs
 
 function updateOutputs() {
   const customCommand = document.getElementById('customCommand').value;
-  localStorage.setItem('customCommand', customCommand);
-  localStorage.setItem('inputNames', input.value);
-  localStorage.setItem('prefix', prefixInput.value);
-  localStorage.setItem('suffix', suffixInput.value);
-  localStorage.setItem('enablePrefix', enablePrefix.checked);
-  localStorage.setItem('enableSuffix', enableSuffix.checked);
+  localStorage.setItem('pythian_acosta_name-formatter_customCommand', customCommand);
+  localStorage.setItem('pythian_acosta_name-formatter_inputNames', input.value);
+  localStorage.setItem('pythian_acosta_name-formatter_prefix', prefixInput.value);
+  localStorage.setItem('pythian_acosta_name-formatter_suffix', suffixInput.value);
+  localStorage.setItem('pythian_acosta_name-formatter_enablePrefix', enablePrefix.checked);
+  localStorage.setItem('pythian_acosta_name-formatter_enableSuffix', enableSuffix.checked);
 
   const rawLines = input.value.trim().split(/\n+/);
   const names = rawLines.filter(name => name.trim() !== '');
