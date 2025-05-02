@@ -1,0 +1,90 @@
+const input = document.getElementById('inputNames');
+const prefixInput = document.getElementById('prefix');
+const suffixInput = document.getElementById('suffix');
+const enablePrefix = document.getElementById('enablePrefix');
+const enableSuffix = document.getElementById('enableSuffix');
+
+const errorDiv = document.getElementById('error');
+
+window.addEventListener('DOMContentLoaded', () => {
+  input.value = localStorage.getItem('inputNames') || '';
+  prefixInput.value = localStorage.getItem('prefix') || '';
+  suffixInput.value = localStorage.getItem('suffix') || '';
+  enablePrefix.checked = localStorage.getItem('enablePrefix') !== 'false';
+  enableSuffix.checked = localStorage.getItem('enableSuffix') !== 'false';
+  document.getElementById('customCommand').value = localStorage.getItem('customCommand') || '';
+  updateOutputs();
+});
+
+input.addEventListener('input', updateOutputs);
+prefixInput.addEventListener('input', updateOutputs);
+suffixInput.addEventListener('input', updateOutputs);
+enablePrefix.addEventListener('change', updateOutputs);
+enableSuffix.addEventListener('change', updateOutputs);
+document.getElementById('customCommand').addEventListener('input', updateOutputs);
+
+function updateOutputs() {
+  const customCommand = document.getElementById('customCommand').value;
+  localStorage.setItem('customCommand', customCommand);
+  localStorage.setItem('inputNames', input.value);
+  localStorage.setItem('prefix', prefixInput.value);
+  localStorage.setItem('suffix', suffixInput.value);
+  localStorage.setItem('enablePrefix', enablePrefix.checked);
+  localStorage.setItem('enableSuffix', enableSuffix.checked);
+
+  const rawLines = input.value.trim().split(/\n+/);
+  const names = rawLines.filter(name => name.trim() !== '');
+  const invalidNames = names.filter(name => name.includes(' '));
+  const prefix = enablePrefix.checked ? prefixInput.value : '';
+  const suffix = enableSuffix.checked ? suffixInput.value : '';
+
+  const invalidPrefixSuffix = [];
+  if (prefix.includes(' ')) invalidPrefixSuffix.push(`prefix: "${prefix}"`);
+  if (suffix.includes(' ')) invalidPrefixSuffix.push(`suffix: "${suffix}"`);
+
+  if (invalidNames.length > 0 || invalidPrefixSuffix.length > 0) {
+    let msg = '';
+    if (invalidNames.length > 0) {
+      msg += 'Names cannot contain spaces. Invalid name(s): ' + invalidNames.join(', ') + '. ';
+    }
+    if (invalidPrefixSuffix.length > 0) {
+      msg += 'Prefix/suffix cannot contain spaces. Invalid input(s): ' + invalidPrefixSuffix.join(', ') + '.';
+    }
+    errorDiv.textContent = 'Error: ' + msg;
+    clearOutputs();
+    return;
+  } else {
+    errorDiv.textContent = '';
+  }
+
+  const transformed = names.map(name => `${prefix}${name}${suffix}`);
+
+  document.getElementById('output1').textContent = transformed.join(' ');
+  document.getElementById('output2').textContent = transformed.join('|');
+  document.getElementById('output3').textContent = transformed.map(name => `--tag name=${name}`).join(' ');
+  document.getElementById('output4').textContent = transformed.map(name => `${customCommand}${name}`).join(' ');
+}
+
+function clearOutputs() {
+  document.getElementById('output1').textContent = '';
+  document.getElementById('output2').textContent = '';
+  document.getElementById('output3').textContent = '';
+  document.getElementById('output4').textContent = '';
+}
+
+function copyToClipboard(elementId, button) {
+  const text = document.getElementById(elementId).textContent.replace(/\n/g, '').replace(/\s+/g, '');
+  navigator.clipboard.writeText(text).then(() => {
+    flashButtonColor(button, 'green');
+  }).catch(() => {
+    flashButtonColor(button, 'red');
+  });
+}
+
+function flashButtonColor(button, color) {
+  const originalColor = button.style.backgroundColor;
+  button.style.backgroundColor = color;
+  setTimeout(() => {
+    button.style.backgroundColor = originalColor || '#007bff';
+  }, 3000);
+}
